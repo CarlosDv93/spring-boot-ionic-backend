@@ -32,7 +32,7 @@ public class Produto implements Serializable{
 	)
 	private List<Categoria> categorias = new ArrayList<>();
 	
-	private Produto() {
+	public Produto() {
 		
 	}
 
@@ -67,11 +67,11 @@ public class Produto implements Serializable{
 		this.preco = preco;
 	}
 
-	public List<Categoria> getCategoria() {
+	public List<Categoria> getCategorias() {
 		return categorias;
 	}
 
-	public void setCategoria(List<Categoria> categoria) {
+	public void setCategorias(List<Categoria> categoria) {
 		this.categorias = categoria;
 	}
 
