@@ -2,6 +2,7 @@ package com.carlosdv93.udemy.cursomc;
 
 import java.util.Arrays;
 
+import org.mockito.internal.util.collections.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -82,6 +83,9 @@ public class CursomcApplication implements CommandLineRunner{
 		Endereco e2 = new Endereco(null, "Avenida Matos", "105", "Sala 800", "Centro", "38777012", cli1, c2);
 		
 		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		
+		clienteRepository.save(Arrays.asList(cli1));
+		enderecoRepository.save(Arrays.asList(e1, e2));
 		
 		
 	}
