@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.carlosdv93.udemy.cursomc.domain.Categoria;
-import com.carlosdv93.udemy.cursomc.domain.Cliente;
 import com.carlosdv93.udemy.cursomc.dto.CategoriaDTO;
 import com.carlosdv93.udemy.cursomc.repositories.CategoriaRepository;
 import com.carlosdv93.udemy.cursomc.services.exceptions.DataIntegrityException;

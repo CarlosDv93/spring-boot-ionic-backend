@@ -8,11 +8,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.carlosdv93.udemy.cursomc.domain.Cidade;
 import com.carlosdv93.udemy.cursomc.domain.Cliente;
-import com.carlosdv93.udemy.cursomc.domain.Cliente;
+import com.carlosdv93.udemy.cursomc.domain.Endereco;
 import com.carlosdv93.udemy.cursomc.dto.ClienteDTO;
+import com.carlosdv93.udemy.cursomc.dto.ClienteNewDTO;
+import com.carlosdv93.udemy.cursomc.enums.TipoCliente;
 import com.carlosdv93.udemy.cursomc.repositories.ClienteRepository;
+import com.carlosdv93.udemy.cursomc.repositories.EnderecoRepository;
 import com.carlosdv93.udemy.cursomc.services.exceptions.DataIntegrityException;
 import com.carlosdv93.udemy.cursomc.services.exceptions.ObjectNotFoundException;
 
@@ -21,12 +26,23 @@ public class ClienteService {
 	
 	@Autowired
 	private ClienteRepository repo;
+
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 	
 	public Cliente find(Integer id) {
 		Cliente obj = repo.findOne(id);
 		if(obj == null) {
 			throw new ObjectNotFoundException("Objecto não Encontrado: " + id + "\nTipo: " + Cliente.class.getName());
 		}
+		return obj;
+	}
+	
+	@Transactional
+	public Cliente insert(Cliente obj) {
+		obj.setId(null);
+		obj = repo.save(obj);
+		enderecoRepository.save(obj.getEnderecos());
 		return obj;
 	}
 	
@@ -50,8 +66,6 @@ public class ClienteService {
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível excluir porque há entidades relacionadas");
 		}
-		
-		
 	}
 	
 	public List<Cliente> findAll(){
@@ -69,4 +83,18 @@ public class ClienteService {
 		return new Cliente(clienteDTO.getId(), clienteDTO.getNome(), clienteDTO.getEmail(), null, null);
 	}
 	
+	public Cliente fromDTO(ClienteNewDTO clienteNewDTO) {
+		Cliente cli = new Cliente(null, clienteNewDTO.getNome(), clienteNewDTO.getEmail(), clienteNewDTO.getCpfOuCnpj(), TipoCliente.toEnum(clienteNewDTO.getTipo()));
+		Cidade cid = new Cidade(clienteNewDTO.getCidadeId(), null, null);
+		Endereco end = new Endereco(null, clienteNewDTO.getLogradouro(), clienteNewDTO.getNumero(), clienteNewDTO.getComplemente(), clienteNewDTO.getBairro(), clienteNewDTO.getCep(), cli, cid);
+		cli.getEnderecos().add(end);
+		cli.getTelefones().add(clienteNewDTO.getTelefone1());
+		if(clienteNewDTO.getTelefone2() != null) {
+			cli.getTelefones().add(clienteNewDTO.getTelefone2());
+		}
+		if(clienteNewDTO.getTelefone3() != null) {
+			cli.getTelefones().add(clienteNewDTO.getTelefone3());
+		}
+		return cli;
+	}
 }
