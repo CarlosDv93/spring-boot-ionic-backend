@@ -3,17 +3,24 @@ package com.carlosdv93.udemy.cursomc.services;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.carlosdv93.udemy.cursomc.domain.Cliente;
 import com.carlosdv93.udemy.cursomc.domain.ItemPedido;
 import com.carlosdv93.udemy.cursomc.domain.PagamentoComBoleto;
 import com.carlosdv93.udemy.cursomc.domain.Pedido;
 import com.carlosdv93.udemy.cursomc.enums.EstadoPagamento;
+import com.carlosdv93.udemy.cursomc.repositories.ClienteRepository;
 import com.carlosdv93.udemy.cursomc.repositories.ItemPedidoRepository;
 import com.carlosdv93.udemy.cursomc.repositories.PagamentoRepository;
 import com.carlosdv93.udemy.cursomc.repositories.PedidoRepository;
 import com.carlosdv93.udemy.cursomc.repositories.ProdutoRepository;
 import com.carlosdv93.udemy.cursomc.resources.BoletoService;
+import com.carlosdv93.udemy.cursomc.security.UserSS;
+import com.carlosdv93.udemy.cursomc.services.exceptions.AuthorizationException;
 import com.carlosdv93.udemy.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
@@ -33,6 +40,9 @@ public class PedidoService {
 	
 	@Autowired
 	private ItemPedidoRepository itemPedidoRepository;
+	
+	@Autowired
+	private ClienteRepository clienteRepository;
 	
 	@Autowired
 	private EmailService emailService;
@@ -74,6 +84,18 @@ public class PedidoService {
 		//emailService.sendConfirmationOrderEmail(obj);
 		emailService.sendOrderConfirmationHtmlEmail(obj);
 		return obj;
+	}
+	
+	public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
+		
+		UserSS user = UserService.authenticaded();
+		if (user == null ) {
+			throw new AuthorizationException("Acesso Negado");
+		}
+		
+		PageRequest pageRequest = new PageRequest(page, linesPerPage, Direction.valueOf(direction), orderBy);
+		Cliente cliente = clienteRepository.findOne(user.getId());
+		return repo.findByCliente(cliente, pageRequest);
 	}
 	
 }
