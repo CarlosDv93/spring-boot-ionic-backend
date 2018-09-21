@@ -16,9 +16,12 @@ import com.carlosdv93.udemy.cursomc.domain.Cliente;
 import com.carlosdv93.udemy.cursomc.domain.Endereco;
 import com.carlosdv93.udemy.cursomc.dto.ClienteDTO;
 import com.carlosdv93.udemy.cursomc.dto.ClienteNewDTO;
+import com.carlosdv93.udemy.cursomc.enums.Perfil;
 import com.carlosdv93.udemy.cursomc.enums.TipoCliente;
 import com.carlosdv93.udemy.cursomc.repositories.ClienteRepository;
 import com.carlosdv93.udemy.cursomc.repositories.EnderecoRepository;
+import com.carlosdv93.udemy.cursomc.security.UserSS;
+import com.carlosdv93.udemy.cursomc.services.exceptions.AuthorizationException;
 import com.carlosdv93.udemy.cursomc.services.exceptions.DataIntegrityException;
 import com.carlosdv93.udemy.cursomc.services.exceptions.ObjectNotFoundException;
 
@@ -35,6 +38,11 @@ public class ClienteService {
 	private BCryptPasswordEncoder pe;
 	
 	public Cliente find(Integer id) {
+		UserSS user =  UserService.authenticaded();
+		if(user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())) {
+			throw new AuthorizationException("Acesso Negado");
+		}
+		
 		Cliente obj = repo.findOne(id);
 		if(obj == null) {
 			throw new ObjectNotFoundException("Objecto não Encontrado: " + id + "\nTipo: " + Cliente.class.getName());
