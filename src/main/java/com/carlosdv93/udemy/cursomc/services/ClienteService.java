@@ -1,9 +1,11 @@
 package com.carlosdv93.udemy.cursomc.services;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +43,12 @@ public class ClienteService {
 	
 	@Autowired
 	private S3Services s3Services;
+	
+	@Autowired
+	private ImageService imageService;
+	
+	@Value("${img.prefix.client.profile}")
+	private String prefix;
 
 	
 	public Cliente find(Integer id) {
@@ -84,12 +92,10 @@ public class ClienteService {
 			throw new AuthorizationException("Acesso Negado");
 		}
 		
-		URI uri = s3Services.uploadFile(multipartFile);
-		Cliente cli = repo.findOne(user.getId());
-		cli.setImageURL(uri.toString());
-		repo.save(cli);
+		BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+		String fileName = prefix + user.getId() + ".jpg";
 		
-		return uri;
+		return s3Services.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
 	}
 
 	public void delete(Integer id) {
