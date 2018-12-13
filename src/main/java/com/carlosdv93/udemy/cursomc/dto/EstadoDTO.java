@@ -2,6 +2,8 @@ package com.carlosdv93.udemy.cursomc.dto;
 
 import java.io.Serializable;
 
+import com.carlosdv93.udemy.cursomc.domain.Estado;
+
 public class EstadoDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
@@ -13,9 +15,13 @@ public class EstadoDTO implements Serializable{
 	}
 	
 	public EstadoDTO(int id, String nome) {
-		super();
 		this.id = id;
 		this.nome = nome;
+	}
+	
+	public EstadoDTO(Estado estado) {
+		this.id = estado.getId();
+		this.nome = estado.getNome();
 	}
 	
 	public int getId() {

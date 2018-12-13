@@ -83,7 +83,6 @@ public class ClienteService {
 	}
 
 	private void updateData(Cliente newObj, Cliente obj) {
-		// TODO Auto-generated method stub
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
 	}
@@ -118,6 +117,7 @@ public class ClienteService {
 	}
 	
 	public Cliente findByEmail(String email) {
+		
 		UserSS user = UserService.authenticated();
 		if (user == null || !user.hasRole(Perfil.ADMIN) || !email.equals(user.getUsername())) {
 			throw new AuthorizationException("Acesso Negado");
