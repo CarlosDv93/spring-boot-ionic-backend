@@ -24,6 +24,7 @@ public class Estado implements Serializable{
 	@JsonIgnore
 	@OneToMany(mappedBy="estado")
 	private List<Cidade> cidades = new ArrayList<>();
+	//Idem ao outro lado, ou seja, não é necessário instanciar
 
 	public Estado(Integer id, String nome) {
 		super();

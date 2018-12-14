@@ -21,7 +21,8 @@ public class Cidade implements Serializable{
 	@ManyToOne
 	@JoinColumn(name="estado_id")
 	private Estado estado = new Estado();
-
+	//Não é necessário instanciar o estado nesse caso.
+ 
 	
 	public Cidade(Integer id, String nome, Estado estado) {
 		super();
