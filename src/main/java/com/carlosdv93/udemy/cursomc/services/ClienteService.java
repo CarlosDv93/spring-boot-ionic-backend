@@ -128,7 +128,7 @@ public class ClienteService {
 			throw new ObjectNotFoundException("Email: " + email + " não encontrado no banco de dados %n"
 					+ "User: " + user.getId() + " " + user.getUsername());
 		}
-		return null;
+		return cliente;
 	}
 	
 	public Page<Cliente> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
